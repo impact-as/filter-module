@@ -1,18 +1,12 @@
 import { Injectable } from '@angular/core';
 
-import { IFilterApiParams } from '../models/filer-api-params.interface';
+import { IFilterApi } from '../models/filter.interfaces';
 @Injectable()
 export class FilterApiService {
   constructor() { }
 
-  public getFilterApiParams(params, routeUrl: string): IFilterApiParams {
-    return {
-      apiUrl: "api url goes here",
-      httpParams: this.httpParams(params)
-    };
-  }
-
-  private httpParams(params) {
-    return params;    
+  //TODO: should map from a route url to a api url
+  public getFilterApi(routeUrl: string): IFilterApi {
+    return {} as IFilterApi;
   }
 }

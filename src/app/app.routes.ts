@@ -3,8 +3,8 @@ import { Routes, RouterModule, Resolve, RouterStateSnapshot, ActivatedRouteSnaps
 
 import { Observable } from 'rxjs/Observable';
 
-import { FilterResolver } from './filter/filter.resolve';
-import { FilterpageComponent } from './filter/components/filter-page.component';
+import { ProductPageComponent } from './product/components/product-page.component';
+import { PersonPageComponent } from './person/components/person-page.component';
 
 import { DefaultComponent } from './default.component';
 
@@ -14,12 +14,13 @@ const appRoutes: Routes = [
     component: DefaultComponent,
   },
   {
-    path: "filter/:id",
-    component: FilterpageComponent,
-    resolve: {
-      data: FilterResolver
-    }
-  }
+    path: 'product/:id',
+    component: ProductPageComponent
+  },
+  {
+    path: 'person/:id',
+    component: PersonPageComponent
+  }  
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forRoot(appRoutes);

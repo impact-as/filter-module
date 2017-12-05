@@ -2,9 +2,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { FilterModule } from './filter/filter.module';
-import { routing } from './app.routes';
 import { DefaultComponent } from './default.component';
+
+import { PersonModule } from './person/person.module';
+import { ProductModule } from './product/product.module';
+
+import { routing } from './app.routes';
 
 @NgModule({
   declarations: [
@@ -13,10 +16,10 @@ import { DefaultComponent } from './default.component';
   ],
   imports: [
     BrowserModule,
-    FilterModule,
+    PersonModule,
+    ProductModule,
     routing
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

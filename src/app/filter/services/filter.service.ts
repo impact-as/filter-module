@@ -9,8 +9,9 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { FilterApiService } from './filter-api.service';
-import { IFilterApi, IFilterState, IFacetResult, IFilter, IFacet } from '../models/filter.interfaces';
+import { filterConfigs } from '../config/filter.config';
+
+import { IFilterConfig, IFilterState, IFacetResult, IFilter, IFacet } from '../models/filter.interfaces';
 import { HttpParams } from '@angular/common/http/src/params';
 
 @Injectable()
@@ -19,7 +20,6 @@ export class FilterService<T> {
   private bs: BehaviorSubject<IFilterState<T>>
 
   constructor(
-    private filterApiService: FilterApiService,
     private http: HttpClient,
     private location: Location,
     private router: Router,
@@ -29,8 +29,8 @@ export class FilterService<T> {
 
     this.route.queryParams
       .subscribe(params => {
-        const api = this.filterApiService.getFilterApi(location.path());
-        this.pushParamsToFilterState(api.url, this.asHttpParams(params));
+        const config = this.getFilterConfig(location.path(), filterConfigs);
+        this.pushParamsToFilterState(config.url, this.asHttpParams(params));
       });        
   }
 
@@ -104,6 +104,11 @@ export class FilterService<T> {
   //TODO: fix!!
   private asHttpParams(params: Params): HttpParams {
     return params as HttpParams;
+  }
+
+  //TODO: fix!!
+  private getFilterConfig(path: string, filterConfigs: IFilterConfig[]): IFilterConfig {
+    return filterConfigs[0];
   }
 
   private getEmptyFilterState(): IFilterState<T> {

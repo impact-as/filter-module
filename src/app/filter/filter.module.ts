@@ -5,7 +5,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { FacetSelectorComponent } from './components/facet-selector.component';
 
 import { FilterService } from './services/filter.service';
-import { FilterApiService } from './services/filter-api.service';
 
 @NgModule({
   imports: [
@@ -16,8 +15,7 @@ import { FilterApiService } from './services/filter-api.service';
     FacetSelectorComponent
   ],
   providers: [
-    FilterService,
-    FilterApiService
+    FilterService
   ],
   exports: [
     FacetSelectorComponent

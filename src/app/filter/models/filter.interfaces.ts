@@ -2,7 +2,7 @@ import { HttpParams } from "@angular/common/http/src/params";
 
 export type FilterKey = "product" | "person";
 
-export interface IFilterApi {
+export interface IFilterConfig {
     key: FilterKey,
     url: string;
 }

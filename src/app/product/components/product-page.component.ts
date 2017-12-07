@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Observable } from "rxjs/Observable";
-
 import { FilterService } from '../../filter/services/filter.service';
-import { IFilterState, IFacet } from '../../filter/models/filter.interfaces';
+import { IFilterResult, IFacet } from '../../filter/models/filter.interfaces';
 
 import { IProduct } from '../models/product.interface';
 
@@ -20,7 +18,6 @@ import { IProduct } from '../models/product.interface';
     `
 })
 export class ProductPageComponent implements OnInit {
-    public data: Observable<IFilterState<IProduct>>
     public facets: IFacet[];
     public productNames: string[];
 
@@ -30,8 +27,8 @@ export class ProductPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.filterService.getFilterState().subscribe(data => {
-            this.facets = data.filter.Facets;
+        this.filterService.getFilterResults().subscribe(data => {
+            this.facets = data.filterState.Facets;
             this.productNames = data.entities.map(p => p.Name);
         });
     }

@@ -10,13 +10,13 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { filterConfigs } from '../config/filter.config';
 
-import { IFilterConfig, IFilterState, IFacetResult, IFilter, IFacet } from '../models/filter.interfaces';
+import { IFilterConfig, IFilterResult, IFilterState, IFacet, IFacetResult } from '../models/filter.interfaces';
 import { HttpParams } from '@angular/common/http/src/params';
 
 @Injectable()
 export class FilterService<T> {
 
-  private bs: BehaviorSubject<IFilterState<T>>
+  private bs: BehaviorSubject<IFilterResult<T>>
 
   constructor(
     private http: HttpClient,
@@ -34,12 +34,12 @@ export class FilterService<T> {
       });      
   }
 
-  public getFilterState(): Observable<IFilterState<T>> {
+  public getFilterResults(): Observable<IFilterResult<T>> {
     return this.bs.asObservable();
   }
 
   public updateMultiCheckFacet(key: string, item: IFacetResult, isChecked: boolean): void {
-    const newFacets = this.bs.value.filter.Facets
+    const newFacets = this.bs.value.filterState.Facets
                           .map(facet => this.getFacetWithResultChecked(facet, key, item, isChecked));
 
     const newFacetParams = newFacets.map(facet => this.getFacetParams(facet))
@@ -84,14 +84,14 @@ export class FilterService<T> {
   private pushParamsToFilterState(url: string, params: HttpParams): void {
     this.http.get(url, {params: params})
         .subscribe(data => {
-          this.bs.next(this.toFilterStateModel(data));
+          this.bs.next(this.toFilterResult(data));
         });
   }
 
-  private toFilterStateModel(data: any): IFilterState<T> {
+  private toFilterResult(data: any): IFilterResult<T> {
     return {
       entities: data.Products,
-      filter: {
+      filterState: {
         AvailableSortOrders: data.AvailableSortOrders,
         Facets: data.Facets,
         HasNextPage: data.HasNextPage,
@@ -111,9 +111,9 @@ export class FilterService<T> {
     return filterConfigs[0];
   }
 
-  private getEmptyFilterState(): IFilterState<T> {
+  private getEmptyFilterState(): IFilterResult<T> {
     return {
-      filter: {
+      filterState: {
         AvailableSortOrders: [],
         Facets: [],
         HasNextPage: false,

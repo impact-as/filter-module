@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Observable } from "rxjs/Observable";
-
 import { FilterService } from '../../filter/services/filter.service';
-import { IFilterState, IFacet } from '../../filter/models/filter.interfaces';
+import { IFilterResult, IFacet } from '../../filter/models/filter.interfaces';
 
 import { IPerson } from '../models/person.interface';
 
@@ -20,7 +18,6 @@ import { IPerson } from '../models/person.interface';
     `
 })
 export class PersonPageComponent implements OnInit {
-    public data: Observable<IFilterState<IPerson>>
     public facets: IFacet[];
     public personNames: string[];
 
@@ -30,8 +27,8 @@ export class PersonPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.filterService.getFilterState().subscribe(data => {
-            this.facets = data.filter.Facets;
+        this.filterService.getFilterResults().subscribe(data => {
+            this.facets = data.filterState.Facets;
             this.personNames = data.entities.map(p => p.Name);
         });
     }

@@ -7,12 +7,12 @@ export interface IFilterConfig {
     url: string;
 }
 
-export interface IFilterState<T> {
-    filter: IFilter;
+export interface IFilterResult<T> {
+    filterState: IFilterState;
     entities: T[];
 }
 
-export interface IFilter {
+export interface IFilterState {
     AvailableSortOrders: ISortOrder[];
     Facets: IFacet[];
     HasNextPage: boolean;
@@ -29,7 +29,7 @@ export interface ISortOrder {
 }
 
 export interface IFacet {
-    Control: string; // TODO: should be typed!
+    Control: string; // TODO: should be a type!
     Key: string;
     Name: string;
     FacetResults: IFacetResult[];

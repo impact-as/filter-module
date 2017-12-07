@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+
 import { FilterModule } from '../filter/filter.module';
+import { SharedModule } from '../shared/shared.module';
 
 import { ProductPageComponent } from './components/product-page.component';
 
@@ -9,7 +11,8 @@ import { ProductPageComponent } from './components/product-page.component';
   imports: [
     CommonModule,
     HttpClientModule,
-    FilterModule
+    FilterModule,
+    SharedModule
   ],
   declarations: [
     ProductPageComponent

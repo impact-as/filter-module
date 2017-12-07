@@ -3,9 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { Observable } from "rxjs/Observable";
 
-import { FilterService } from '../services/filter.service';
-
-import { IFilterState, IFacetResult, IFacet } from '../models/filter.interfaces';
+import { FilterService } from '../../filter/services/filter.service';
+import { IFilterState, IFacetResult, IFacet } from '../../filter/models/filter.model';
 
 @Component({
     selector: 'facet-selector',

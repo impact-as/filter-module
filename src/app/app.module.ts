@@ -6,6 +6,7 @@ import { DefaultComponent } from './default.component';
 
 import { PersonModule } from './person/person.module';
 import { ProductModule } from './product/product.module';
+import { SharedModule } from './shared/shared.module';
 
 import { routing } from './app.routes';
 
@@ -18,6 +19,7 @@ import { routing } from './app.routes';
     BrowserModule,
     PersonModule,
     ProductModule,
+    SharedModule,
     routing
   ],
   bootstrap: [AppComponent]

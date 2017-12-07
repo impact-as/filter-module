@@ -8,9 +8,9 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { filterConfigs } from '../config/filter.config';
+import { filterConfigs } from '../configs/filter.config';
 
-import { IFilterConfig, IFilterResult, IFilterState, IFacet, IFacetResult } from '../models/filter.interfaces';
+import { IFilterConfig, IFilterResult, IFilterState, IFacet, IFacetResult } from '../models/filter.model';
 import { HttpParams } from '@angular/common/http/src/params';
 
 @Injectable()
@@ -44,7 +44,7 @@ export class FilterService<T> {
 
     const newFacetParams = newFacets.map(facet => this.getFacetParams(facet))
                                     .reduce((target, source) => Object.assign(target, source), {});
-    
+                                       
     this.router.navigate([], {queryParams: newFacetParams});
   }
 

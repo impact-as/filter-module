@@ -1,5 +1,3 @@
-import { HttpParams } from "@angular/common/http/src/params";
-
 export type FilterKey = "product" | "person";
 
 export interface IFilterConfig {

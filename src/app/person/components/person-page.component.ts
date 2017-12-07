@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { FilterService } from '../../filter/services/filter.service';
-import { IFilterResult, IFacet } from '../../filter/models/filter.interfaces';
+import { IFilterResult, IFacet } from '../../filter/models/filter.model';
 
 import { IPerson } from '../models/person.interface';
 

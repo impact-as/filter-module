@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
 import { FilterModule } from '../filter/filter.module';
+import { SharedModule } from '../shared/shared.module';
 
 import { PersonPageComponent } from './components/person-page.component';
 
@@ -10,7 +11,8 @@ import { PersonPageComponent } from './components/person-page.component';
   imports: [
     CommonModule,
     HttpClientModule,
-    FilterModule
+    FilterModule,
+    SharedModule
   ],
   declarations: [
     PersonPageComponent

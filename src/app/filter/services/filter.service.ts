@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Location } from '@angular/common';
 import { Params } from '@angular/router/src/shared';
-import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
+import { Router, Route, ActivationEnd, ActivatedRouteSnapshot } from '@angular/router';
 
-import { first, map, skip } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -21,17 +20,18 @@ export class FilterService<T> {
 
   constructor(
     private http: HttpClient,
-    private location: Location,
-    private router: Router,
-    private route: ActivatedRoute
+    private router: Router
   ) {
     this.bs = new BehaviorSubject(this.getEmptyFilterState());
 
-    this.route.queryParams
-      .subscribe(params => {
-        const config = this.getFilterConfig(location.path(), filterConfigs);
-        this.pushParamsToFilterState(config.url, this.asHttpParams(params));
-      });        
+    this.router.events
+      .pipe(
+        filter(event => event instanceof ActivationEnd),
+        map((event: ActivationEnd) => event.snapshot)
+      ).subscribe((snapshot: ActivatedRouteSnapshot) => {
+        const config = this.getFilterConfig(snapshot.routeConfig, filterConfigs);
+        this.pushParamsToFilterState(config.url, this.asHttpParams(snapshot.queryParams));
+      });      
   }
 
   public getFilterState(): Observable<IFilterState<T>> {
@@ -107,7 +107,7 @@ export class FilterService<T> {
   }
 
   //TODO: fix!!
-  private getFilterConfig(path: string, filterConfigs: IFilterConfig[]): IFilterConfig {
+  private getFilterConfig(route: Route, filterConfigs: IFilterConfig[]): IFilterConfig {
     return filterConfigs[0];
   }
 

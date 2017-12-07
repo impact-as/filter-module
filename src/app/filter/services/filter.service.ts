@@ -34,11 +34,11 @@ export class FilterService<T> {
       });        
   }
 
-  public getFilter(): Observable<IFilterState<T>> {
+  public getFilterState(): Observable<IFilterState<T>> {
     return this.bs.asObservable();
   }
 
-  public updateMulticheckFacet(key: string, item: IFacetResult, isChecked: boolean) {
+  public updateMultiCheckFacet(key: string, item: IFacetResult, isChecked: boolean): void {
     const newFacets = this.bs.value.filter.Facets
                           .map(facet => this.getFacetWithResultChecked(facet, key, item, isChecked));
 

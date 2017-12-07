@@ -25,12 +25,12 @@ export class ProductPageComponent implements OnInit {
     public productNames: string[];
 
     constructor(
-        public filterService: FilterService<IProduct>
+        private filterService: FilterService<IProduct>
     ) {
     }
 
     ngOnInit() {
-        this.filterService.getFilter().subscribe(data => {
+        this.filterService.getFilterState().subscribe(data => {
             this.facets = data.filter.Facets;
             this.productNames = data.entities.map(p => p.Name);
         });

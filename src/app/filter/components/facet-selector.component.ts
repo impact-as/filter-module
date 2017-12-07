@@ -13,15 +13,15 @@ import { IFilterState, IFacetResult, IFacet } from '../models/filter.interfaces'
         <div class="filter__facet-group">
             <div>
                 <h2 class="filter__facet-group-headline">{{ facet.Name }}</h2>
-                <div class="filter__facet-item-container" >                
-                    <label for="{{facet.EscapedKey}}{{item.Query.Name}}" *ngFor="let item of facet.FacetResults">
+                <div class="filter__facet-item-container" *ngFor="let item of facet.FacetResults">                
+                    <label for="{{facet.EscapedKey}}{{item.Query.Name}}">
                         <input id="{{facet.EscapedKey}}{{item.Query.Name}}" 
                                #input
                                class="filter__facet-checkbox" 
                                type="checkbox" 
                                [checked]="item.IsSelected" 
                                [disabled]="!item.Count"
-                               (change)="onItemChange(input.checked, item)" />
+                               (change)="onItemChange(item, input.checked)" />
                         <div class="filter__facet-item" [ngClass]="{ 'filter__facet-item_selected' : item.IsSelected }" >
                             <span class="filter__checkbox-name">{{item.Query.Name}}</span> 
                             <span class="filter__checkbox-count">({{item.Count || 0}})</span>
@@ -43,7 +43,7 @@ export class FacetSelectorComponent<T> implements OnInit {
     ngOnInit() {
     }
 
-    public onItemChange(isChecked: boolean, item: IFacetResult): void {
-        this.filterService.updateMulticheckFacet(this.facet.Key, item, isChecked);
+    public onItemChange(item: IFacetResult, isChecked: boolean): void {
+        this.filterService.updateMultiCheckFacet(this.facet.Key, item, isChecked);
     }
 }

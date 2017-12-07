@@ -30,7 +30,7 @@ export class PersonPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.filterService.getFilter().subscribe(data => {
+        this.filterService.getFilterState().subscribe(data => {
             this.facets = data.filter.Facets;
             this.personNames = data.entities.map(p => p.Name);
         });

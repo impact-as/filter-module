@@ -22,7 +22,7 @@ export class FilterService<T> {
     private http: HttpClient,
     private router: Router
   ) {
-    this.bs = new BehaviorSubject(this.getEmptyFilterState());
+    this.bs = new BehaviorSubject(this.getEmptyFilterResult());
 
     this.router.events
       .pipe(
@@ -111,7 +111,7 @@ export class FilterService<T> {
     return filterConfigs[0];
   }
 
-  private getEmptyFilterState(): IFilterResult<T> {
+  private getEmptyFilterResult(): IFilterResult<T> {
     return {
       filterState: {
         AvailableSortOrders: [],

@@ -1,3 +1,5 @@
+import { Facet } from "./facet.model";
+
 export type FilterKey = "product" | "person";
 
 export interface IFilterConfig {
@@ -12,7 +14,7 @@ export interface IFilterResult<T> {
 
 export interface IFilterState {
     AvailableSortOrders: ISortOrder[];
-    Facets: IFacet[];
+    Facets: Facet[];
     HasNextPage: boolean;
     PageIndex?: number;
     PageSize: number;
@@ -26,21 +28,3 @@ export interface ISortOrder {
     Name: string;
 }
 
-export interface IFacet {
-    Control: string; // TODO: should be a type!
-    Key: string;
-    Name: string;
-    FacetResults: IFacetResult[];
-}
-
-export interface IFacetResult {
-    Count: number;
-    IsSelected: boolean;
-    Query: IQuery;
-}
-
-export interface IQuery {
-    Name: string;
-    Value: string;
-    EscapedValue: string;
-}

@@ -4,7 +4,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from "rxjs/Observable";
 
 import { FilterService } from '../../filter/services/filter.service';
-import { IFilterState, IFacetResult, IFacet } from '../../filter/models/filter.model';
+import { IFilterState } from '../../filter/models/filter.model';
+import { MultiCheckFacet, MultiCheckFacetResult } from '../../filter/models/facet.model';
 
 @Component({
     selector: 'facet-selector',
@@ -12,18 +13,18 @@ import { IFilterState, IFacetResult, IFacet } from '../../filter/models/filter.m
         <div class="filter__facet-group">
             <div>
                 <h2 class="filter__facet-group-headline">{{ facet.Name }}</h2>
-                <div class="filter__facet-item-container" *ngFor="let item of facet.FacetResults">                
-                    <label for="{{facet.EscapedKey}}{{item.Query.Name}}">
-                        <input id="{{facet.EscapedKey}}{{item.Query.Name}}" 
+                <div class="filter__facet-item-container" *ngFor="let item of facet.results">                
+                    <label for="{{facet.EscapedKey}}{{item.name}}">
+                        <input id="{{facet.EscapedKey}}{{item.name}}" 
                                #input
                                class="filter__facet-checkbox" 
                                type="checkbox" 
-                               [checked]="item.IsSelected" 
-                               [disabled]="!item.Count"
+                               [checked]="item.isActive" 
+                               [disabled]="!item.count"
                                (change)="onItemChange(item, input.checked)" />
-                        <div class="filter__facet-item" [ngClass]="{ 'filter__facet-item_selected' : item.IsSelected }" >
-                            <span class="filter__checkbox-name">{{item.Query.Name}}</span> 
-                            <span class="filter__checkbox-count">({{item.Count || 0}})</span>
+                        <div class="filter__facet-item" [ngClass]="{ 'filter__facet-item_selected' : item.isActive }" >
+                            <span class="filter__checkbox-name">{{item.name}}</span> 
+                            <span class="filter__checkbox-count">({{item.count || 0}})</span>
                         </div>
                     </label>
                 </div>
@@ -32,7 +33,7 @@ import { IFilterState, IFacetResult, IFacet } from '../../filter/models/filter.m
     `
 })
 export class FacetSelectorComponent<T> implements OnInit {
-    @Input() facet: IFacet;
+    @Input() facet: MultiCheckFacet;
 
     constructor(
         private filterService: FilterService<T>
@@ -42,7 +43,16 @@ export class FacetSelectorComponent<T> implements OnInit {
     ngOnInit() {
     }
 
-    public onItemChange(item: IFacetResult, isChecked: boolean): void {
-        this.filterService.updateMultiCheckFacet(this.facet.Key, item, isChecked);
+    public onItemChange(item: MultiCheckFacetResult, isChecked: boolean): void {
+        const newResults = this.facet.results.map(result => {
+            if (result.key !== item.key) {
+                return result;
+            }
+
+            result.isActive = isChecked;
+            return result;
+        })
+
+        this.filterService.updateFacet(Object.assign(this.facet, {results: newResults}));
     }
 }

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 import { FilterService } from '../../filter/services/filter.service';
-import { IFilterResult, IFacet } from '../../filter/models/filter.model';
+import { IFilterResult } from '../../filter/models/filter.model';
+import { Facet } from '../../filter/models/facet.model';
 
 import { IProduct } from '../models/product.interface';
 
@@ -18,7 +19,7 @@ import { IProduct } from '../models/product.interface';
     `
 })
 export class ProductPageComponent implements OnInit {
-    public facets: IFacet[];
+    public facets: Facet[];
     public productNames: string[];
 
     constructor(

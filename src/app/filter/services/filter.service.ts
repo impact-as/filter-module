@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
+
 import { HttpClient } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http/src/params';
+
 import { Params } from '@angular/router/src/shared';
 import { Router, Route, ActivationEnd, ActivatedRouteSnapshot } from '@angular/router';
 
@@ -10,8 +13,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { filterConfigs } from '../configs/filter.config';
 
-import { IFilterConfig, IFilterResult, IFilterState, IFacet, IFacetResult } from '../models/filter.model';
-import { HttpParams } from '@angular/common/http/src/params';
+import { IFilterConfig, IFilterResult, IFilterState } from '../models/filter.model';
+import { Facet, MultiCheckFacet } from '../models/facet.model';
 
 @Injectable()
 export class FilterService<T> {
@@ -38,48 +41,40 @@ export class FilterService<T> {
     return this.bs.asObservable();
   }
 
-  public updateMultiCheckFacet(key: string, item: IFacetResult, isChecked: boolean): void {
-    const newFacets = this.bs.value.filterState.Facets
-                          .map(facet => this.getFacetWithResultChecked(facet, key, item, isChecked));
+  public updateFacet(newFacet: Facet): void {
+    const queryParams = this.bs.value.filterState.Facets
+      .map(facet => newFacet.key === facet.key ? newFacet : facet)
+      .map(facet => this.getFacetParams(facet))
+      .reduce((target, source) => Object.assign(target, source), {});
 
-    const newFacetParams = newFacets.map(facet => this.getFacetParams(facet))
-                                    .reduce((target, source) => Object.assign(target, source), {});
-                                       
-    this.router.navigate([], {queryParams: newFacetParams});
+    this.router.navigate([], { queryParams });
   }
 
-  private getFacetWithResultChecked(facet: IFacet, key: string, item: IFacetResult, isChecked: boolean) {
-    if (facet.Key !== key) {
-      return facet;
+  private getFacetParams(facet: Facet): Params {
+    switch(facet.kind) {
+      case "multi-check": 
+        return this.getMultiCheckFacetParams(facet);
+      case "one-sided-slider": //TODO: needs implementation
+      case "two-sided-slider": //TODO: needs implementation
+      default:
+        return {};      
     }
-
-    facet.FacetResults = facet.FacetResults.map(result => {
-      if (result.Query.Name === item.Query.Name) {
-        result.IsSelected = isChecked;
-      }
-
-      return result;
-    });
-
-    return facet;
   }
 
-  private getFacetParams(facet: IFacet): Params {
-    return facet.FacetResults
-              .filter(result => result.IsSelected)
-              .map(result => {
-                return {
-                  key: facet.Key,
-                  value: facet.FacetResults.filter(result => result.IsSelected)
-                                                .map(result => result.Query.Value)
-                                                .join(',')
-                }
-              }).reduce((target, kv) => {
-                const source = {};
-                source[kv.key] = kv.value
-                return Object.assign(target, source);
-              }, {});
-  }  
+  private getMultiCheckFacetParams(facet: MultiCheckFacet): Params {
+    return facet.results
+                .filter(result => result.isActive)
+                .reduce((params, facetResult) => {
+                  let obj = {};
+                  obj[facet.key] = [facetResult.key];
+                  
+                  if (params[facet.key] instanceof Array) {
+                    obj[facet.key].push(...params[facet.key]);
+                  }
+
+                  return Object.assign(params, obj);
+                }, {});
+  }
 
   private pushParamsToFilterState(url: string, params: HttpParams): void {
     this.http.get(url, {params: params})
@@ -89,11 +84,33 @@ export class FilterService<T> {
   }
 
   private toFilterResult(data: any): IFilterResult<T> {
+    data.Facets = data.Facets.map(facet => {
+      facet.FacetResults = facet.FacetResults.map(result => {
+        result.IsSelected = result.IsSelected !==  undefined ? result.IsSelected : false;
+        return result;
+      });
+      return facet;
+    });
+
     return {
       entities: data.Products,
       filterState: {
         AvailableSortOrders: data.AvailableSortOrders,
-        Facets: data.Facets,
+        Facets: data.Facets.map(facet => {
+          return {
+            kind: "multi-check",
+            key: facet.Key,
+            name: facet.Name,    
+            results: facet.FacetResults.map(result => {
+              return {
+                count: result.Count,  
+                isActive: result.IsSelected,
+                key: result.Query.Value,
+                name: result.Query.Name     
+              }
+            })
+          }
+        }),
         HasNextPage: data.HasNextPage,
         PageSize: data.PageSize,
         TotalDocumentsFound: data.TotalDocumentsFound

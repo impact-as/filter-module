@@ -7,7 +7,7 @@ import { FilterService } from '../../filter/services/filter.service';
 import { MultiCheckFacet, MultiCheckFacetResult } from '../../filter/models/facet.model';
 
 @Component({
-    selector: 'facet-selector',
+    selector: 'multi-check-facet',
     template: `
         <div class="filter__facet-group">
             <div>
@@ -31,7 +31,7 @@ import { MultiCheckFacet, MultiCheckFacetResult } from '../../filter/models/face
         </div>
     `
 })
-export class FacetSelectorComponent<T> implements OnInit {
+export class MultiCheckFacetComponent<T> implements OnInit {
     @Input() facet: MultiCheckFacet;
 
     constructor(
@@ -44,13 +44,12 @@ export class FacetSelectorComponent<T> implements OnInit {
 
     public onItemChange(item: MultiCheckFacetResult, isChecked: boolean): void {
         const newResults = this.facet.results.map(result => {
-            if (result.key !== item.key) {
-                return result;
-            }
+            const newIsActive = result.key === item.key
+                ? isChecked
+                : result.isActive;
 
-            result.isActive = isChecked;
-            return result;
-        })
+            return Object.assign(result, {isActive: newIsActive});
+        });
 
         this.filterService.updateFacet(Object.assign(this.facet, {results: newResults}));
     }

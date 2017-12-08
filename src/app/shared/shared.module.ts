@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
-import { FacetSelectorComponent } from './components/facet-selector.component';
+import { MultiCheckFacetComponent } from './components/multi-check-facet.component';
 
 @NgModule({
   imports: [
@@ -10,10 +10,10 @@ import { FacetSelectorComponent } from './components/facet-selector.component';
     HttpClientModule
   ],
   declarations: [
-    FacetSelectorComponent
+    MultiCheckFacetComponent
   ],
   exports: [
-    FacetSelectorComponent
+    MultiCheckFacetComponent
   ]
 })
 export class SharedModule { }

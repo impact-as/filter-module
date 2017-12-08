@@ -29,7 +29,7 @@ export class PersonPageComponent implements OnInit {
 
     ngOnInit() {
         this.filterService.getFilterResults().subscribe(data => {
-            this.facets = data.filterState.Facets;
+            this.facets = data.facets;
             this.personNames = data.entities.map(p => p.Name);
         });
     }

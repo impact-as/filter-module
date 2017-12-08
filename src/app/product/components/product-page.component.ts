@@ -29,7 +29,7 @@ export class ProductPageComponent implements OnInit {
 
     ngOnInit() {
         this.filterService.getFilterResults().subscribe(data => {
-            this.facets = data.filterState.Facets;
+            this.facets = data.facets;
             this.productNames = data.entities.map(p => p.Name);
         });
     }

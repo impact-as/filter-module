@@ -4,7 +4,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from "rxjs/Observable";
 
 import { FilterService } from '../../filter/services/filter.service';
-import { IFilterState } from '../../filter/models/filter.model';
 import { MultiCheckFacet, MultiCheckFacetResult } from '../../filter/models/facet.model';
 
 @Component({

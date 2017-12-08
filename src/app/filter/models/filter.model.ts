@@ -8,23 +8,7 @@ export interface IFilterConfig {
 }
 
 export interface IFilterResult<T> {
-    filterState: IFilterState;
+    facets: Facet[];
     entities: T[];
+    totalEntityCount: number;
 }
-
-export interface IFilterState {
-    AvailableSortOrders: ISortOrder[];
-    Facets: Facet[];
-    HasNextPage: boolean;
-    PageIndex?: number;
-    PageSize: number;
-    SearchTerm?: string;
-    SelectedSortOrder?: ISortOrder;
-    TotalDocumentsFound: number;
-}
-
-export interface ISortOrder {
-    Key: string;
-    Name: string;
-}
-

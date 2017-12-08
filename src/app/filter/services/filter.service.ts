@@ -13,7 +13,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { filterConfigs } from '../configs/filter.config';
 
-import { IFilterConfig, IFilterResult, IFilterState } from '../models/filter.model';
+import { IFilterConfig, IFilterResult } from '../models/filter.model';
 import { Facet, MultiCheckFacet } from '../models/facet.model';
 
 @Injectable()
@@ -42,7 +42,7 @@ export class FilterService<T> {
   }
 
   public updateFacet(newFacet: Facet): void {
-    const queryParams = this.bs.value.filterState.Facets
+    const queryParams = this.bs.value.facets
       .map(facet => newFacet.key === facet.key ? newFacet : facet)
       .map(facet => this.getFacetParams(facet))
       .reduce((target, source) => Object.assign(target, source), {});
@@ -54,6 +54,9 @@ export class FilterService<T> {
     switch(facet.kind) {
       case "multi-check": 
         return this.getMultiCheckFacetParams(facet);
+      case "search":
+      case "pagination":
+      case "sort":
       case "one-sided-slider": //TODO: needs implementation
       case "two-sided-slider": //TODO: needs implementation
       default:
@@ -94,27 +97,22 @@ export class FilterService<T> {
 
     return {
       entities: data.Products,
-      filterState: {
-        AvailableSortOrders: data.AvailableSortOrders,
-        Facets: data.Facets.map(facet => {
-          return {
-            kind: "multi-check",
-            key: facet.Key,
-            name: facet.Name,    
-            results: facet.FacetResults.map(result => {
-              return {
-                count: result.Count,  
-                isActive: result.IsSelected,
-                key: result.Query.Value,
-                name: result.Query.Name     
-              }
-            })
-          }
-        }),
-        HasNextPage: data.HasNextPage,
-        PageSize: data.PageSize,
-        TotalDocumentsFound: data.TotalDocumentsFound
-      }
+      facets: data.Facets.map(facet => {
+        return {
+          kind: "multi-check",
+          key: facet.Key,
+          name: facet.Name,    
+          results: facet.FacetResults.map(result => {
+            return {
+              count: result.Count,  
+              isActive: result.IsSelected,
+              key: result.Query.Value,
+              name: result.Query.Name     
+            }
+          })
+        }
+      }),
+      totalEntityCount: data.TotalDocumentsFound      
     };
   }
 
@@ -130,14 +128,9 @@ export class FilterService<T> {
 
   private getEmptyFilterResult(): IFilterResult<T> {
     return {
-      filterState: {
-        AvailableSortOrders: [],
-        Facets: [],
-        HasNextPage: false,
-        PageSize: 0,
-        TotalDocumentsFound: 0        
-      }, 
-      entities: []
+      facets: [], 
+      entities: [],
+      totalEntityCount: 0
     };    
   }
 }

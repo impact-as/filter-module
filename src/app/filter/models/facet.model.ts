@@ -1,21 +1,21 @@
 export type Facet 
-    = MultiCheckFacet 
+    = MultiCheckBoxFacet 
     | SearchFacet 
     | PaginationFacet 
     | SortFacet 
     | TwoSidedSliderFacet 
     | OneSidedSliderFacet;
 
-/* MULTI CHECK */
+/* MULTI CHECK BOX */
 
-export interface MultiCheckFacet {
-    kind: "multi-check";
+export interface MultiCheckBoxFacet {
+    kind: "multi-check-box";
     key: string;
     name: string;    
-    results: MultiCheckFacetResult[];
+    children: MultiCheckBoxFacetChild[];
 }
 
-export interface MultiCheckFacetResult {
+export interface MultiCheckBoxFacetChild {
     key: string;    
     isActive: boolean;
     count: number;    
@@ -47,10 +47,10 @@ export interface PaginationFacet {
 export interface SortFacet {
     kind: "sort";
     key: string;
-    results: SortFacetResult[];
+    children: SortFacetChild[];
 }
 
-export interface SortFacetResult {
+export interface SortFacetChild {
     key: string;    
     isActive: boolean;
     name: string;

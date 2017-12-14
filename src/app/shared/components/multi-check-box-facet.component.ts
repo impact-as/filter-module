@@ -4,15 +4,15 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from "rxjs/Observable";
 
 import { FilterService } from '../../filter/services/filter.service';
-import { MultiCheckFacet, MultiCheckFacetResult } from '../../filter/models/facet.model';
+import { MultiCheckBoxFacet, MultiCheckBoxFacetChild } from '../../filter/models/facet.model';
 
 @Component({
-    selector: 'multi-check-facet',
+    selector: 'multi-check-box-facet',
     template: `
         <div class="filter__facet-group">
             <div>
-                <h2 class="filter__facet-group-headline">{{ facet.Name }}</h2>
-                <div class="filter__facet-item-container" *ngFor="let item of facet.results">                
+                <h2 class="filter__facet-group-headline">{{ facet.name }}</h2>
+                <div class="filter__facet-item-container" *ngFor="let item of facet.children">                
                     <label for="{{facet.EscapedKey}}{{item.name}}">
                         <input id="{{facet.EscapedKey}}{{item.name}}" 
                                #input
@@ -31,8 +31,8 @@ import { MultiCheckFacet, MultiCheckFacetResult } from '../../filter/models/face
         </div>
     `
 })
-export class MultiCheckFacetComponent<T> implements OnInit {
-    @Input() facet: MultiCheckFacet;
+export class MultiCheckBoxFacetComponent<T> implements OnInit {
+    @Input() facet: MultiCheckBoxFacet;
 
     constructor(
         private filterService: FilterService<T>
@@ -42,15 +42,15 @@ export class MultiCheckFacetComponent<T> implements OnInit {
     ngOnInit() {
     }
 
-    public onItemChange(item: MultiCheckFacetResult, isChecked: boolean): void {
-        const newResults = this.facet.results.map(result => {
-            const newIsActive = result.key === item.key
+    public onItemChange(item: MultiCheckBoxFacetChild, isChecked: boolean): void {
+        const newChildren = this.facet.children.map(child => {
+            const newIsActive = child.key === item.key
                 ? isChecked
-                : result.isActive;
+                : child.isActive;
 
-            return Object.assign(result, {isActive: newIsActive});
+            return Object.assign(child, {isActive: newIsActive});
         });
 
-        this.filterService.updateFacet(Object.assign(this.facet, {results: newResults}));
+        this.filterService.updateFilter(Object.assign(this.facet, {children: newChildren}));
     }
 }

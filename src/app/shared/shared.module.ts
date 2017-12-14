@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
-import { MultiCheckFacetComponent } from './components/multi-check-facet.component';
+import { MultiCheckBoxFacetComponent } from './components/multi-check-box-facet.component';
 
 @NgModule({
   imports: [
@@ -10,10 +10,10 @@ import { MultiCheckFacetComponent } from './components/multi-check-facet.compone
     HttpClientModule
   ],
   declarations: [
-    MultiCheckFacetComponent
+    MultiCheckBoxFacetComponent
   ],
   exports: [
-    MultiCheckFacetComponent
+    MultiCheckBoxFacetComponent
   ]
 })
 export class SharedModule { }

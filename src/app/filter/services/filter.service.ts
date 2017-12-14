@@ -13,19 +13,19 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { filterConfigs } from '../configs/filter.config';
 
-import { IFilterConfig, IFilterResult } from '../models/filter.model';
-import { Facet, MultiCheckFacet } from '../models/facet.model';
+import { IFilterConfig, IFilter } from '../models/filter.model';
+import { Facet, MultiCheckBoxFacet } from '../models/facet.model';
 
 @Injectable()
 export class FilterService<T> {
 
-  private bs: BehaviorSubject<IFilterResult<T>>
+  private bs: BehaviorSubject<IFilter<T>>
 
   constructor(
     private http: HttpClient,
     private router: Router
   ) {
-    this.bs = new BehaviorSubject(this.getEmptyFilterResult());
+    this.bs = new BehaviorSubject(this.getEmptyFilter());
 
     this.router.events
       .pipe(
@@ -37,11 +37,11 @@ export class FilterService<T> {
       });      
   }
 
-  public getFilterResults(): Observable<IFilterResult<T>> {
+  public getFilter(): Observable<IFilter<T>> {
     return this.bs.asObservable();
   }
 
-  public updateFacet(newFacet: Facet): void {
+  public updateFilter(newFacet: Facet): void {
     const queryParams = this.bs.value.facets
       .map(facet => newFacet.key === facet.key ? newFacet : facet)
       .map(facet => this.getFacetParams(facet))
@@ -52,24 +52,24 @@ export class FilterService<T> {
 
   private getFacetParams(facet: Facet): Params {
     switch(facet.kind) {
-      case "multi-check": 
-        return this.getMultiCheckFacetParams(facet);
+      case "multi-check-box":         
+        return this.getMultiCheckBoxFacetParams(facet);
       case "search":
       case "pagination":
       case "sort":
-      case "one-sided-slider": //TODO: needs implementation
-      case "two-sided-slider": //TODO: needs implementation
+      case "one-sided-slider":
+      case "two-sided-slider":
       default:
         return {};      
     }
   }
 
-  private getMultiCheckFacetParams(facet: MultiCheckFacet): Params {
-    return facet.results
-                .filter(result => result.isActive)
-                .reduce((params, facetResult) => {
+  private getMultiCheckBoxFacetParams(facet: MultiCheckBoxFacet): Params {
+    return facet.children
+                .filter(child => child.isActive)
+                .reduce((params, child) => {
                   let obj = {};
-                  obj[facet.key] = [facetResult.key];
+                  obj[facet.key] = [child.key];
                   
                   if (params[facet.key] instanceof Array) {
                     obj[facet.key].push(...params[facet.key]);
@@ -82,11 +82,11 @@ export class FilterService<T> {
   private pushParamsToFilterState(url: string, params: HttpParams): void {
     this.http.get(url, {params: params})
         .subscribe(data => {
-          this.bs.next(this.toFilterResult(data));
+          this.bs.next(this.toFilterModel(data));
         });
   }
 
-  private toFilterResult(data: any): IFilterResult<T> {
+  private toFilterModel(data: any): IFilter<T> {
     data.Facets = data.Facets.map(facet => {
       facet.FacetResults = facet.FacetResults.map(result => {
         result.IsSelected = result.IsSelected !==  undefined ? result.IsSelected : false;
@@ -99,10 +99,10 @@ export class FilterService<T> {
       entities: data.Products,
       facets: data.Facets.map(facet => {
         return {
-          kind: "multi-check",
+          kind: "multi-check-box",
           key: facet.Key,
           name: facet.Name,    
-          results: facet.FacetResults.map(result => {
+          children: facet.FacetResults.map(result => {
             return {
               count: result.Count,  
               isActive: result.IsSelected,
@@ -126,7 +126,7 @@ export class FilterService<T> {
     return filterConfigs[0];
   }
 
-  private getEmptyFilterResult(): IFilterResult<T> {
+  private getEmptyFilter(): IFilter<T> {
     return {
       facets: [], 
       entities: [],

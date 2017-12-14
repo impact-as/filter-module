@@ -7,7 +7,7 @@ export interface IFilterConfig {
     url: string;
 }
 
-export interface IFilterResult<T> {
+export interface IFilter<T> {
     facets: Facet[];
     entities: T[];
     totalEntityCount: number;

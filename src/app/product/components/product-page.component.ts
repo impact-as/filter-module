@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { FilterService } from '../../filter/services/filter.service';
-import { IFilterResult } from '../../filter/models/filter.model';
+import { IFilter } from '../../filter/models/filter.model';
 import { Facet } from '../../filter/models/facet.model';
 
 import { IProduct } from '../models/product.model';
@@ -13,7 +13,7 @@ import { IProduct } from '../models/product.model';
         {{productNames | json}}        
         <div class="filter__facets">
             <div class="filter__facet-container" *ngFor="let facet of facets; trackBy: trackByKey">
-                <multi-check-facet [facet]="facet"></multi-check-facet>
+                <multi-check-box-facet [facet]="facet"></multi-check-box-facet>
             </div>
         </div>
     `
@@ -28,7 +28,7 @@ export class ProductPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.filterService.getFilterResults().subscribe(data => {
+        this.filterService.getFilter().subscribe(data => {
             this.facets = data.facets;
             this.productNames = data.entities.map(p => p.Name);
         });

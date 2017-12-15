@@ -3,8 +3,7 @@ export type Facet
     | SearchFacet 
     | PaginationFacet 
     | SortFacet 
-    | TwoSidedSliderFacet 
-    | OneSidedSliderFacet;
+    | TwoSidedSliderFacet;
 
 /* MULTI CHECK BOX */
 
@@ -67,16 +66,4 @@ export interface TwoSidedSliderFacet {
     max: number;
     currentMin: number;
     currentMax: number;
-}
-
-/* ONE SIDED SLIDER */
-
-export interface OneSidedSliderFacet {
-    kind: "one-sided-slider";
-    key: string;
-    isActive: boolean;
-    name: string;
-    min: number;
-    max: number;
-    value: number;
 }

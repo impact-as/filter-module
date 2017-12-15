@@ -13,8 +13,10 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { filterConfigs } from '../configs/filter.config';
 
+import { assignToValueProperty, assignToArrayProperty, assignToRangeProperty } from '../functions/param.function';
+
 import { IFilterConfig, IFilter } from '../models/filter.model';
-import { Facet, MultiCheckBoxFacet } from '../models/facet.model';
+import { Facet, MultiCheckBoxFacet, SearchFacet, SortFacet, TwoSidedSliderFacet } from '../models/facet.model';
 
 @Injectable()
 export class FilterService<T> {
@@ -52,31 +54,51 @@ export class FilterService<T> {
 
   private getFacetParams(facet: Facet): Params {
     switch(facet.kind) {
-      case "multi-check-box":         
+      case "multi-check-box":    
         return this.getMultiCheckBoxFacetParams(facet);
       case "search":
-      case "pagination":
-      case "sort":
-      case "one-sided-slider":
+        return this.getSearchFacetParams(facet);
+      case "sort":      
+        return this.getSortFacetParams(facet);
       case "two-sided-slider":
+        return this.getTwoSidedFacetParams(facet);
+      case "pagination":
       default:
         return {};      
     }
   }
 
   private getMultiCheckBoxFacetParams(facet: MultiCheckBoxFacet): Params {
-    return facet.children
-                .filter(child => child.isActive)
-                .reduce((params, child) => {
-                  let obj = {};
-                  obj[facet.key] = [child.key];
-                  
-                  if (params[facet.key] instanceof Array) {
-                    obj[facet.key].push(...params[facet.key]);
-                  }
+    return facet.children.map(child => {
+      return {
+        key: facet.key,
+        value: child.key,
+        isActive: child.isActive
+      }
+    }).reduce<Params>(assignToArrayProperty, {});
+  }
 
-                  return Object.assign(params, obj);
-                }, {});
+  private getSearchFacetParams(facet: SearchFacet): Params {
+    return assignToValueProperty({}, facet);
+  }
+
+  private getSortFacetParams(facet: SortFacet): Params {
+    return facet.children.map(child => {
+      return {
+        key: facet.key,
+        value: child.key,
+        isActive: child.isActive
+      }
+    }).reduce<Params>(assignToValueProperty, {});
+  }
+
+  private getTwoSidedFacetParams(facet: TwoSidedSliderFacet): Params {
+    return assignToRangeProperty({}, {
+      key: facet.key,
+      from: facet.min,
+      to: facet.max,
+      isActive: facet.isActive
+    });
   }
 
   private pushParamsToFilterState(url: string, params: HttpParams): void {

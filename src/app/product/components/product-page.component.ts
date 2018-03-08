@@ -1,36 +1,48 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 
-import { FilterService } from '../../filter/services/filter.service';
-import { IFilter } from '../../filter/models/filter.model';
-import { Facet } from '../../filter/models/facet.model';
+import { FilterService } from "../../filter/services/filter.service";
+import { IFilter } from "../../filter/models/filter.model";
+import {
+  Facet,
+  MultiCheckBoxFacet,
+  PaginationFacet
+} from "../../filter/models/facet.model";
 
-import { IProduct } from '../models/product.model';
+import { IProduct } from "../models/product.model";
 
 @Component({
-    selector: 'product-page',
-    template: `
+  selector: "product-page",
+  template: `
         <h1>Product page</h1>
-        {{productNames | json}}        
+        <h2>Pagination</h2>
+        <pagination-facet [facet]="paginationFacet"></pagination-facet>    
+        <pre>{{productNames | json}}</pre>
         <div class="filter__facets">
-            <div class="filter__facet-container" *ngFor="let facet of facets; trackBy: trackByKey">
+            <div class="filter__facet-container" *ngFor="let facet of multiCheckBoxFacets; trackBy: trackByKey">
                 <multi-check-box-facet [facet]="facet"></multi-check-box-facet>
             </div>
         </div>
     `
 })
 export class ProductPageComponent implements OnInit {
-    public facets: Facet[];
-    public productNames: string[];
+  public multiCheckBoxFacets: MultiCheckBoxFacet[];
+  public paginationFacet: PaginationFacet;
 
-    constructor(
-        private filterService: FilterService<IProduct>
-    ) {
-    }
+  public productNames: string[];
 
-    ngOnInit() {
-        this.filterService.getFilter().subscribe(data => {
-            this.facets = data.facets;
-            this.productNames = data.entities.map(p => p.Name);
-        });
-    }
+  constructor(private filterService: FilterService<IProduct>) {}
+
+  ngOnInit() {
+    this.filterService.getFilter().subscribe(data => {
+      this.multiCheckBoxFacets = data.facets.filter(
+        facet => facet.kind === "multi-check-box"
+      ) as MultiCheckBoxFacet[];
+
+      this.paginationFacet = data.facets.find(
+        facet => facet.kind === "pagination"
+      ) as PaginationFacet;
+
+      this.productNames = data.entities.map(p => p.Name);
+    });
+  }
 }

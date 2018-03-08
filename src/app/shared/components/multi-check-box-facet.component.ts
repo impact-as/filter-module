@@ -1,14 +1,17 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit, Input, OnChanges } from "@angular/core";
+import { Router, ActivatedRoute } from "@angular/router";
 
 import { Observable } from "rxjs/Observable";
 
-import { FilterService } from '../../filter/services/filter.service';
-import { MultiCheckBoxFacet, MultiCheckBoxFacetChild } from '../../filter/models/facet.model';
+import { FilterService } from "../../filter/services/filter.service";
+import {
+  MultiCheckBoxFacet,
+  MultiCheckBoxFacetChild
+} from "../../filter/models/facet.model";
 
 @Component({
-    selector: 'multi-check-box-facet',
-    template: `
+  selector: "multi-check-box-facet",
+  template: `
         <div class="filter__facet-group">
             <div>
                 <h2 class="filter__facet-group-headline">{{ facet.name }}</h2>
@@ -32,25 +35,21 @@ import { MultiCheckBoxFacet, MultiCheckBoxFacetChild } from '../../filter/models
     `
 })
 export class MultiCheckBoxFacetComponent<T> implements OnInit {
-    @Input() facet: MultiCheckBoxFacet;
+  @Input() facet: MultiCheckBoxFacet;
 
-    constructor(
-        private filterService: FilterService<T>
-    ) {
-    }
+  constructor(private filterService: FilterService<T>) {}
 
-    ngOnInit() {
-    }
+  ngOnInit() {}
 
-    public onItemChange(item: MultiCheckBoxFacetChild, isChecked: boolean): void {
-        const newChildren = this.facet.children.map(child => {
-            const newIsActive = child.key === item.key
-                ? isChecked
-                : child.isActive;
+  public onItemChange(item: MultiCheckBoxFacetChild, isChecked: boolean): void {
+    const newChildren = this.facet.children.map(child => {
+      const newIsActive = child.key === item.key ? isChecked : child.isActive;
 
-            return Object.assign(child, {isActive: newIsActive});
-        });
+      return Object.assign(child, { isActive: newIsActive });
+    });
 
-        this.filterService.updateFilter(Object.assign(this.facet, {children: newChildren}));
-    }
+    this.filterService.updateFilter(
+      Object.assign({}, this.facet, { children: newChildren })
+    );
+  }
 }
